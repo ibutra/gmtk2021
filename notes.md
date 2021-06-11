@@ -33,7 +33,7 @@ Ideen/Brainstorming:
             * Faulenzen
             * Feiern
             * Wassersport
-            * Luftsport
+            (* Luftsport)
             * Sport
             * Lesen
             * Gärtnern

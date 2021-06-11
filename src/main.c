@@ -1,8 +1,12 @@
+#include <stdlib.h>
+#include <time.h>
 #include <stdio.h>
 
 #include "raylib.h"
+#include "person.h"
 
 int main(int argc, char** argv) {
+    srand(time(NULL));
     const int screenWidth = 1024;
     const int screenHeight = 768;
 
