@@ -1,0 +1,5 @@
+{
+    "src/*.c": {"alternate": "inc/{}.h"},
+    "inc/*.h": {"alternate": "src/{}.c"},
+    "*": {"make": "make -C build -j8"}
+}
