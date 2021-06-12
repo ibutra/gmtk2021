@@ -166,27 +166,16 @@ void gui_drawPersonlist(PersonArray* array) {
         x += CHARACTER_RECT;
         //Draw interests the character wants
         int num = 0;
-        /* if (startDragPerson && startDragPerson != person) { */
-        /*     wantTint.a *= 0.25; */
-        /* } */
-        /* for (int i = 0; i < NUM_INTERESTS; i++) { */
-        /*     if (person->wants & (1 << i)) { */
-        /*         Texture2D texture = gui_getIconForInterest(1 << i); */
-        /*         gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint); */
-        /*         num++; */
-        /*     } */
-        /* } */
         //Draw interests the character has
-        y += CHARACTER_RECT - 2 * INTEREST_RECT;
+        y += CHARACTER_RECT - 1 * INTEREST_RECT;
         num = 0;
         for (int i = 0; i < NUM_INTERESTS; i++) {
-            if (i == NUM_INTERESTS / 2) {
-                y += INTEREST_RECT;
+            bool bright = true;
+            if (person->has & (1 << i)) {
+                Texture2D texture = gui_getIconForInterest(1 << i, !bright);
+                gui_drawTextureScaledToSize(texture, x + (num % (NUM_INTERESTS / 2))* INTEREST_RECT, y, INTEREST_RECT, tint);
+                num++;
             }
-            bool bright = person->has & (1 << i);
-            Texture2D texture = gui_getIconForInterest(1 << i, !bright);
-            gui_drawTextureScaledToSize(texture, x + (num % (NUM_INTERESTS / 2))* INTEREST_RECT, y, INTEREST_RECT, tint);
-            num++;
         }
         //Outline
         DrawRectangleLinesEx(gui_getCharacterFileRect(person), 2.0f, BLACK);
