@@ -12,7 +12,7 @@
 /*
  * Defines
  */
-#define TIME_TO_START (1.0f) //Seconds //TODO: set reasonable
+#define TIME_TO_START (1000000.0f) //Seconds //TODO: set reasonable
 #define SCROLL_FACTOR (40.0f) //TODO: decide whether this gets progressively faster
 
 #define INTERFACE_HEIGHT (50)
@@ -119,14 +119,23 @@ void gui_drawPersonlist(PersonArray* array) {
         //Draw character
         DrawRectangleRec(gui_getCharacterFileRect(person), tint);
         gui_drawTextureScaledToSize(character, x, y, CHARACTER_RECT, tint);
-        //Draw interests
         if (!person) {
             fprintf(stderr, "Invalid person requested, something is seriously wrong!!!\n");
             exit(-1);
         }
         x += CHARACTER_RECT;
-        y += CHARACTER_RECT - INTEREST_RECT;
+        //Draw interests the character wants
         int num = 0;
+        for (int i = 0; i < NUM_INTERESTS; i++) {
+            if (person->wants & (1 << i)) {
+                Texture2D texture = gui_getIconForInterest(1 << i);
+                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint);
+                num++;
+            }
+        }
+        //Draw interests the character has
+        y += CHARACTER_RECT - INTEREST_RECT;
+        num = 0;
         for (int i = 0; i < NUM_INTERESTS; i++) {
             if (person->has & (1 << i)) {
                 Texture2D texture = gui_getIconForInterest(1 << i);
@@ -136,6 +145,7 @@ void gui_drawPersonlist(PersonArray* array) {
         }
         //Outline
         DrawRectangleLinesEx(gui_getCharacterFileRect(person), 2.0f, BLACK);
+        //Connection to partner
         if (person->partner) {
             Person* partner = person->partner;
             if (partner->index < person->index) { //We draw line from the later character so it remains visible
@@ -144,6 +154,11 @@ void gui_drawPersonlist(PersonArray* array) {
                 int controlY = (personAnchor.y + partnerAnchor.y) / 2;
                 int controlX = GetScreenWidth() / 2;
                 DrawLineBezierQuad(personAnchor, partnerAnchor, (Vector2){.x = controlX, .y = controlY}, 2.0f, BLACK);
+                char buffer[40];
+                snprintf(buffer, 40, "%lli", person_getScore(person));
+                const int size = 20;
+                DrawRectangle(controlX, controlY - size / 2, MeasureText(buffer, size), size, WHITE);
+                DrawText(buffer, controlX, controlY - size / 2, size, BLACK);
             }
         }
     }

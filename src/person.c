@@ -5,6 +5,7 @@
 #include "names.h"
 
 static Interests person_generateInterest(void);
+static uint64_t person_getCount(Interests interests);
 
 Person person_create(void) {
     unsigned int r = rand()/((RAND_MAX)/nameListNum);//Not equally distributed but eh
@@ -18,6 +19,20 @@ Person person_create(void) {
         .index = 0,
     };
     return p;
+}
+
+uint64_t person_getScore(Person* person) {
+    uint64_t score = 0;
+    Person* partner = person->partner;
+    if (!partner) {
+        return 0;
+    }
+    //Check my direction
+    Interests combined = person->wants & partner->has;
+    score += person_getCount(combined);
+    combined = person->has & partner->wants;
+    score += person_getCount(combined);
+    return score;
 }
 
 static Interests person_generateInterest(void) {
@@ -38,6 +53,12 @@ static Interests person_generateInterest(void) {
     return result;
 }
 
-uint64_t person_getScore(Person* person) {
-    return person->partner? 1 : 0; //TODO: come up with some fancy ranking based on matched interests
+static uint64_t person_getCount(Interests interests) {
+    uint64_t count = 0;
+    for (int i = 0; i < NUM_INTERESTS; i++) {
+        if (interests & (1 << i)) {
+            count += 1;
+        }
+    }
+    return count;
 }
