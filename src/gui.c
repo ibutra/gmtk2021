@@ -306,9 +306,10 @@ void gui_handleInput(void) {
 }
 
 static void gui_handleMatch(Person* person) {
-    score += person_getScore(person);
     if (!person->happy) {
         num_expired += 2;
+    } else {
+        score += person_getScore(person);
     }
 }
 
