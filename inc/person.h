@@ -34,5 +34,6 @@ typedef struct Person{
 
 Person person_create(void);
 uint64_t person_getScore(Person* person);
+uint64_t person_getScoreBetween(Person* a, Person* b);
 
 #endif //PERSON_H

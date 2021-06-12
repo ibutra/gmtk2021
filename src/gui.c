@@ -12,7 +12,7 @@
 /*
  * Defines
  */
-#define TIME_TO_START (1000000.0f) //Seconds //TODO: set reasonable
+#define TIME_TO_START (5.0f) //Seconds //TODO: set reasonable
 #define SCROLL_FACTOR (40.0f) //TODO: decide whether this gets progressively faster
 
 #define INTERFACE_HEIGHT (50)
@@ -154,28 +154,23 @@ void gui_drawPersonlist(PersonArray* array) {
                 int controlY = (personAnchor.y + partnerAnchor.y) / 2;
                 int controlX = GetScreenWidth() / 2;
                 DrawLineBezierQuad(personAnchor, partnerAnchor, (Vector2){.x = controlX, .y = controlY}, 2.0f, BLACK);
-                char buffer[40];
-                snprintf(buffer, 40, "%lli", person_getScore(person));
-                const int size = 20;
-                DrawRectangle(controlX, controlY - size / 2, MeasureText(buffer, size), size, WHITE);
-                DrawText(buffer, controlX, controlY - size / 2, size, BLACK);
             }
         }
     }
 }
 
 void gui_drawInterface(PersonArray* array) {
+    //Score and expired
+    DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
+    DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
+    int y = INTERFACE_HEIGHT / 2;
     //Start timer
     if (elapsedTime < 0.0f) {
         char buffer[20];
         snprintf(buffer, 20, "%i", (int)fabsf(elapsedTime));
-        DrawText(buffer, GetScreenWidth() / 2, GetScreenHeight() / 2, 20, BLACK);
+        DrawText(buffer, GetScreenWidth() / 2, y, 20, BLACK);
     }
 
-    //Score and expired
-    int y = INTERFACE_HEIGHT / 2;
-    DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
-    DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
     char buffer[1024];
     snprintf(buffer, 1024, "Sad Characters: %li", num_expired);
     DrawText(buffer, MARGIN, y, 20, BLACK);
@@ -198,8 +193,8 @@ void gui_handleInput(PersonArray* array) {
             waitForRelease = true;
             return;
         }
+        //Draw a cool line or soemthing
         if (startDragPerson) {
-            //Draw a cool line or soemthing
             Vector2 anchor = gui_getLineAnchor(startDragPerson);
             int controlY = (anchor.y + mouse.y) / 2;
             int controlX = GetScreenWidth() / 2;
@@ -215,7 +210,26 @@ void gui_handleInput(PersonArray* array) {
                 }
                 if (!startDragPerson) {
                     startDragPerson = p;
-                } else if (p != startDragPerson) {
+                } else if (startDragPerson && p != startDragPerson) { //If we hover over a person show potential score
+                    char buffer[40];
+                    snprintf(buffer, 40, "%lli", person_getScoreBetween(startDragPerson, p));
+                    const int mouseOffset = 10;
+                    const int size = 20;
+                    const int offset = 2;
+                    DrawRectangle(mouse.x - offset, mouse.y - size / 2 - offset - mouseOffset, MeasureText(buffer, size) + 2 * offset, size + 2 * offset, WHITE);
+                    DrawText(buffer, mouse.x, mouse.y - size / 2 - mouseOffset, size, BLACK);
+                }
+            }
+        }
+    } else if (IsMouseButtonReleased(0)) {
+        for (size_t i = expired_index; i < array->count; i++) {
+            Person* p = personarray_get(array, i);
+            Rectangle r = gui_getCharacterFileRect(p);
+            if (CheckCollisionPointRec(mouse, r)) {
+                if (p->partner || p->expired) {
+                    continue;
+                }
+                if (p != startDragPerson && person_canMatch(startDragPerson, p)) {
                     startDragPerson->partner = p;
                     p->partner = startDragPerson;
                     gui_handleMatch(p);

@@ -34,10 +34,10 @@ int main(int argc, char** argv) {
 
         BeginDrawing();
         {
+            ClearBackground(WHITE);
             gui_updateGameTime();
-            gui_handleInput(&personArray);
-            ClearBackground(RAYWHITE);
             gui_drawPersonlist(&personArray);
+            gui_handleInput(&personArray);
             gui_drawInterface(&personArray);
         }
         EndDrawing();

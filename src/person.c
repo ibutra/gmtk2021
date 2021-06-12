@@ -22,11 +22,14 @@ Person person_create(void) {
 }
 
 uint64_t person_getScore(Person* person) {
-    uint64_t score = 0;
-    Person* partner = person->partner;
-    if (!partner) {
+    return person_getScoreBetween(person, person->partner);
+}
+
+uint64_t person_getScoreBetween(Person* a, Person* b) {
+    if (!a || ! b) {
         return 0;
     }
+    uint64_t score = 0;
     //Check my direction
     Interests combined = person->wants & partner->has;
     score += person_getCount(combined);
@@ -35,7 +38,7 @@ uint64_t person_getScore(Person* person) {
     return score;
 }
 
-static Interests person_generateInterest(void) {
+static Interests person_generateInterest(int num) {
     //I want 5 of the possible interests
     Interests result = 0;
     int i = 0;
@@ -46,7 +49,7 @@ static Interests person_generateInterest(void) {
         }
         result |= (1 <<r);
         i++;
-        if (i == 5) {
+        if (i == num) {
             break;
         }
     }
