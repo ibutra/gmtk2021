@@ -12,10 +12,10 @@
 /*
  * Defines
  */
-#define TIME_TO_START (0.0f) //Seconds //TODO: set reasonable
-#define SCROLL_FACTOR (40.0f) //TODO: decide whether this gets progressively faster
+#define TIME_TO_START (10.0f) //Seconds //TODO: set reasonable
+#define SCROLL_FACTOR (30.0f) //TODO: decide whether this gets progressively faster
 
-#define NUM_EXPIRED_LOST (10)
+#define NUM_EXPIRED_LOST (10000)
 
 #define INTERFACE_HEIGHT (50)
 
@@ -137,20 +137,25 @@ void gui_drawPersonlist(PersonArray* array) {
         x += CHARACTER_RECT;
         //Draw interests the character wants
         int num = 0;
+        Color wantTint = tint;
+        if (startDragPerson && startDragPerson != person) {
+            wantTint.a *= 0.25;
+        }
         for (int i = 0; i < NUM_INTERESTS; i++) {
             if (person->wants & (1 << i)) {
                 Texture2D texture = gui_getIconForInterest(1 << i);
-                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint);
+                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, wantTint);
                 num++;
             }
         }
         //Draw interests the character has
         y += CHARACTER_RECT - INTEREST_RECT;
         num = 0;
+        Color hasTint = tint;
         for (int i = 0; i < NUM_INTERESTS; i++) {
             if (person->has & (1 << i)) {
                 Texture2D texture = gui_getIconForInterest(1 << i);
-                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint);
+                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, hasTint);
                 num++;
             }
         }
@@ -190,7 +195,7 @@ void gui_drawInterface(PersonArray* array) {
     }
 
     char buffer[1024];
-    snprintf(buffer, 1024, "Sad Characters: %li", num_expired);
+    snprintf(buffer, 1024, "Sad Characters: %li/%i", num_expired, NUM_EXPIRED_LOST);
     DrawText(buffer, MARGIN, y, 20, BLACK);
     snprintf(buffer, 1024, "Score: %lli", score);
     DrawText(buffer, GetScreenWidth() - 200, y, 20, BLACK);
@@ -228,7 +233,7 @@ void gui_handleInput(PersonArray* array) {
                 }
                 if (!startDragPerson) {
                     startDragPerson = p;
-                } else if (startDragPerson && p != startDragPerson) { //If we hover over a person show potential score
+                } else if (false && startDragPerson && p != startDragPerson) { //If we hover over a person show potential score
                     char buffer[40];
                     snprintf(buffer, 40, "%lli", person_getScoreBetween(startDragPerson, p));
                     const int mouseOffset = 10;
