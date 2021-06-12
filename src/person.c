@@ -44,7 +44,7 @@ bool person_match(Person* a, Person* b)  {
     score = MIN(MAX(0, score), sizeof(person_probabilities) / sizeof(int));
     int probability = person_probabilities[score];
     int v = rand() % 100;
-    printf("P: %i Target: %i\n", v, probability);
+    printf("Score: %lli P: %i Target: %i\n", score, v, probability);
     if (v < probability) {
         a->happy = true;
         b->happy = true;

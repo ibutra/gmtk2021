@@ -116,19 +116,22 @@ void gui_drawPersonlist(PersonArray* array) {
             index_visible = person->index + 1; 
         }
         Color tint = WHITE;
+        Color bg = WHITE;
         if (gui_lost()) {
             tint = LIGHTGRAY;
-        } else if (person->expired) {
-            tint = GRAY;
+            bg = LIGHTGRAY;
+        }
+        if (person->expired) {
+            bg = GRAY;
         } else if (person->partner) {
             if (person->happy) {
-                tint = GREEN;
+                bg = GREEN;
             } else {
-                tint = RED;
+                bg = RED;
             }
         }
         //Draw character
-        DrawRectangleRec(gui_getCharacterFileRect(person), tint);
+        DrawRectangleRec(gui_getCharacterFileRect(person), bg);
         gui_drawTextureScaledToSize(character, x, y, CHARACTER_RECT, tint);
         if (!person) {
             fprintf(stderr, "Invalid person requested, something is seriously wrong!!!\n");
@@ -138,9 +141,9 @@ void gui_drawPersonlist(PersonArray* array) {
         //Draw interests the character wants
         int num = 0;
         Color wantTint = tint;
-        if (startDragPerson && startDragPerson != person) {
-            wantTint.a *= 0.25;
-        }
+        /* if (startDragPerson && startDragPerson != person) { */
+        /*     wantTint.a *= 0.25; */
+        /* } */
         for (int i = 0; i < NUM_INTERESTS; i++) {
             if (person->wants & (1 << i)) {
                 Texture2D texture = gui_getIconForInterest(1 << i);
