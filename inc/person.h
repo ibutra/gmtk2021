@@ -1,8 +1,11 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#include <stdlib.h>
 #include <stdbool.h>
+#include <raylib.h>
 
+#define NUM_INTERESTS (12)
 typedef enum {
     COOKING     = (1 << 0),
     HANDYWORK   = (1 << 1),
@@ -18,12 +21,15 @@ typedef enum {
     SHOPPING    = (1 << 11),
 } Interests;
 
-typedef struct {
+typedef struct Person{
     const char* name;
     Interests wants;
     Interests has;
     bool expired;
-}Person;
+    Vector2 position;
+    struct Person* partner;
+    size_t index; //Meh
+} Person;
 
 Person person_create(void);
 

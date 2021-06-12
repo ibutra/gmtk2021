@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
     const int screenWidth = 1024;
     const int screenHeight = 768;
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "GMTK"); //TODO: change title
     SetTargetFPS(60);
 
@@ -33,6 +34,7 @@ int main(int argc, char** argv) {
 
         BeginDrawing();
         {
+            gui_handleInput(&personArray);
             ClearBackground(RAYWHITE);
             /* DrawText("Hello World", 100, 100, 20, BLACK); */
             gui_drawPersonlist(&personArray);

@@ -13,6 +13,6 @@ typedef struct {
 
 bool personarray_create(PersonArray* out);
 bool personarray_add(PersonArray* array, Person person);
-const Person* personarray_get(PersonArray* array, size_t index);
+Person* personarray_get(PersonArray* array, size_t index);
 
 #endif //PERSONARRAY_H

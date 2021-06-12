@@ -33,11 +33,12 @@ bool personarray_add(PersonArray* array, Person person) {
         array->capacity = newCapacity;
     }
     array->persons[array->count] = person;
+    array->persons[array->count].index = array->count;
     array->count++;
     return true;
 }
 
-const Person* personarray_get(PersonArray* array, size_t index) {
+Person* personarray_get(PersonArray* array, size_t index) {
     if (!array) {
         return NULL;
     }
