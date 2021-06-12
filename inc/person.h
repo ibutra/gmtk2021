@@ -29,10 +29,12 @@ typedef struct Person{
     bool expired;
     Vector2 position;
     struct Person* partner;
+    bool happy;
     size_t index; //Meh
 } Person;
 
 Person person_create(void);
+bool person_match(Person* a, Person* b); //Returns true if they stay happily ever after
 uint64_t person_getScore(Person* person);
 uint64_t person_getScoreBetween(Person* a, Person* b);
 

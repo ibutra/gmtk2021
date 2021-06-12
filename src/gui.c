@@ -12,8 +12,10 @@
 /*
  * Defines
  */
-#define TIME_TO_START (5.0f) //Seconds //TODO: set reasonable
+#define TIME_TO_START (0.0f) //Seconds //TODO: set reasonable
 #define SCROLL_FACTOR (40.0f) //TODO: decide whether this gets progressively faster
+
+#define NUM_EXPIRED_LOST (10)
 
 #define INTERFACE_HEIGHT (50)
 
@@ -60,6 +62,7 @@ static void gui_handleExpired(Person* person);
 static Texture2D gui_getIconForInterest(Interests interest);
 static Vector2 gui_getLineAnchor(Person* person);
 static Rectangle gui_getCharacterFileRect(Person* person);
+static bool gui_lost(void);
 
 /*
  * Implementation
@@ -82,7 +85,9 @@ void gui_initPersonIcons(void) {
 }
 
 void gui_updateGameTime(void) {
-    elapsedTime += GetFrameTime();
+    if (!gui_lost()) {
+        elapsedTime += GetFrameTime();
+    }
 }
 
 // Draw two scrolling lists of persons
@@ -111,10 +116,16 @@ void gui_drawPersonlist(PersonArray* array) {
             index_visible = person->index + 1; 
         }
         Color tint = WHITE;
-        if (person->expired) {
+        if (gui_lost()) {
+            tint = LIGHTGRAY;
+        } else if (person->expired) {
             tint = GRAY;
         } else if (person->partner) {
-            tint = PINK;
+            if (person->happy) {
+                tint = GREEN;
+            } else {
+                tint = RED;
+            }
         }
         //Draw character
         DrawRectangleRec(gui_getCharacterFileRect(person), tint);
@@ -164,6 +175,13 @@ void gui_drawInterface(PersonArray* array) {
     DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
     DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
     int y = INTERFACE_HEIGHT / 2;
+    if (gui_lost()) {
+        const char* msg = "GAME OVER!";
+        const int fontSize = 50;
+        const int padding = 3;
+        DrawRectangle((GetScreenWidth() - MeasureText(msg, fontSize)) / 2 - padding, (GetScreenHeight()) / 2 - padding, MeasureText(msg, fontSize) + 2 * padding, fontSize + 2 * padding, WHITE);
+        DrawText(msg, (GetScreenWidth() - MeasureText(msg, fontSize)) / 2 , GetScreenHeight() / 2, fontSize, BLACK);
+    }
     //Start timer
     if (elapsedTime < 0.0f) {
         char buffer[20];
@@ -222,19 +240,20 @@ void gui_handleInput(PersonArray* array) {
             }
         }
     } else if (IsMouseButtonReleased(0)) {
-        for (size_t i = expired_index; i < array->count; i++) {
-            Person* p = personarray_get(array, i);
-            Rectangle r = gui_getCharacterFileRect(p);
-            if (CheckCollisionPointRec(mouse, r)) {
-                if (p->partner || p->expired) {
-                    continue;
-                }
-                if (p != startDragPerson && person_canMatch(startDragPerson, p)) {
-                    startDragPerson->partner = p;
-                    p->partner = startDragPerson;
-                    gui_handleMatch(p);
-                    startDragPerson = NULL;
-                    waitForRelease = true;
+        if (startDragPerson && !startDragPerson->partner && !startDragPerson->expired) {
+            for (size_t i = expired_index; i < array->count; i++) {
+                Person* p = personarray_get(array, i);
+                Rectangle r = gui_getCharacterFileRect(p);
+                if (CheckCollisionPointRec(mouse, r)) {
+                    if (p->partner || p->expired) {
+                        continue;
+                    }
+                    if (p != startDragPerson) {
+                        person_match(startDragPerson, p);
+                        gui_handleMatch(p);
+                        startDragPerson = NULL;
+                        waitForRelease = true;
+                    }
                 }
             }
         }
@@ -246,6 +265,9 @@ void gui_handleInput(PersonArray* array) {
 
 static void gui_handleMatch(Person* person) {
     score += person_getScore(person);
+    if (!person->happy) {
+        num_expired += 1;
+    }
 }
 
 static void gui_handleExpired(Person* person) {
@@ -308,4 +330,8 @@ static Vector2 gui_getLineAnchor(Person* person) {
 
 static Rectangle gui_getCharacterFileRect(Person* person) {
     return (Rectangle){.x = person->position.x, .y = person->position.y, .width = CHARACTER_FILE_WIDTH, .height = CHARACTER_RECT};
+}
+
+static bool gui_lost(void) {
+    return num_expired >= NUM_EXPIRED_LOST;
 }
