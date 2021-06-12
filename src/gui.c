@@ -1,6 +1,7 @@
 #include "gui.h"
 
 #include <stdio.h>
+#include <stdint.h>
 #include <math.h>
 #include <raylib.h>
 
@@ -12,13 +13,16 @@
  * Defines
  */
 #define TIME_TO_START (1.0f) //Seconds //TODO: set reasonable
-#define SCROLL_FACTOR (10.0f) //TODO: decide whether this gets progressively faster
+#define SCROLL_FACTOR (40.0f) //TODO: decide whether this gets progressively faster
+
+#define INTERFACE_HEIGHT (50)
 
 #define CHARACTER_RECT (100)
 #define INTEREST_RECT (40)
 #define CHARACTER_FILE_WIDTH (CHARACTER_RECT + 5 * INTEREST_RECT)
 
 #define MARGIN (100)
+#define INTER_CHARACTER_MARGIN (10)
 
 
 /*
@@ -39,7 +43,10 @@ Texture2D sloth;
 Texture2D wave_surfer;
 Texture2D white_book;
 
-static size_t expired_index = 0; //We don't need to consider characters before this index, they are already unhappy ;)
+static int64_t expired_index = 0; //We don't need to consider characters before this index, they are already unhappy ;)
+static size_t index_visible = 0; //This is the index of the first visible character
+static size_t num_expired = 0; //How many characters didn't get a match
+static uint64_t score = 0; //The score duh. If anybody overflows this let me know
 static Person* startDragPerson = NULL; //Person we are currently dragging from
 static bool waitForRelease = false; //We joined two persons so waiting for mouse release
 static float elapsedTime = -TIME_TO_START;
@@ -48,6 +55,8 @@ static float elapsedTime = -TIME_TO_START;
 /*
  * Static functions
  */
+static void gui_handleMatch(Person* person);
+static void gui_handleExpired(Person* person);
 static Texture2D gui_getIconForInterest(Interests interest);
 static Vector2 gui_getLineAnchor(Person* person);
 static Rectangle gui_getCharacterFileRect(Person* person);
@@ -78,7 +87,7 @@ void gui_updateGameTime(void) {
 
 // Draw two scrolling lists of persons
 void gui_drawPersonlist(PersonArray* array) {
-    for (size_t i = 0; i < array->count; i++) {
+    for (size_t i = index_visible; i < array->count; i++) {
         int width = GetScreenWidth();
         int margin = MARGIN;
         while (width - 2 * CHARACTER_FILE_WIDTH - 2 * margin < 0) {
@@ -86,16 +95,20 @@ void gui_drawPersonlist(PersonArray* array) {
         }
         margin = MAX(0, margin);
 
-        int x = i & 1? margin : width - CHARACTER_FILE_WIDTH - margin;
-        int y = (i >> 1) * 200 + MARGIN - SCROLL_FACTOR * MAX(0, elapsedTime);
+        int x = i & 1? width - CHARACTER_FILE_WIDTH - margin : margin;
+        int y = (i >> 1) * (CHARACTER_RECT + INTER_CHARACTER_MARGIN); //Space characters nicely
+        y += MARGIN + INTERFACE_HEIGHT - SCROLL_FACTOR * MAX(0, elapsedTime); // Add offset to expired line and scroll based on time
 
         Person* person = personarray_get(array, i);
         person->position.x = x;
         person->position.y = y;
         //Handle expired characters
-        if (y == 0 && !person->partner) {
-            person->expired = true;
+        if (y == INTERFACE_HEIGHT && !person->partner && !person->expired) {
             expired_index = person->index;
+            gui_handleExpired(person);
+        }
+        if (y < -CHARACTER_RECT + INTERFACE_HEIGHT) {
+            index_visible = person->index + 1; 
         }
         Color tint = WHITE;
         if (person->expired) {
@@ -125,7 +138,7 @@ void gui_drawPersonlist(PersonArray* array) {
         DrawRectangleLinesEx(gui_getCharacterFileRect(person), 2.0f, BLACK);
         if (person->partner) {
             Person* partner = person->partner;
-            if (partner->index > person->index) {
+            if (partner->index < person->index) { //We draw line from the later character so it remains visible
                 Vector2 personAnchor = gui_getLineAnchor(person);
                 Vector2 partnerAnchor = gui_getLineAnchor(partner);
                 int controlY = (personAnchor.y + partnerAnchor.y) / 2;
@@ -137,17 +150,37 @@ void gui_drawPersonlist(PersonArray* array) {
 }
 
 void gui_drawInterface(PersonArray* array) {
+    //Start timer
     if (elapsedTime < 0.0f) {
         char buffer[20];
         snprintf(buffer, 20, "%i", (int)fabsf(elapsedTime));
         DrawText(buffer, GetScreenWidth() / 2, GetScreenHeight() / 2, 20, BLACK);
     }
+
+    //Score and expired
+    int y = INTERFACE_HEIGHT / 2;
+    DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
+    DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
+    char buffer[1024];
+    snprintf(buffer, 1024, "Sad Characters: %li", num_expired);
+    DrawText(buffer, MARGIN, y, 20, BLACK);
+    snprintf(buffer, 1024, "Score: %lli", score);
+    DrawText(buffer, GetScreenWidth() - 200, y, 20, BLACK);
+
+    //Expiry line
+    y = INTERFACE_HEIGHT + CHARACTER_RECT;
+    DrawLine(0, y, GetScreenWidth(), y, RED);
+    DrawRectangleGradientV(0, INTERFACE_HEIGHT, GetScreenWidth(), CHARACTER_RECT, RED, (Color){.r = 255, .a = 10});
 }
 
 void gui_handleInput(PersonArray* array) {
     Vector2 mouse = GetMousePosition();
     if (IsMouseButtonDown(0)) {
         if (waitForRelease) {
+            return;
+        }
+        if (startDragPerson && startDragPerson->expired) {
+            waitForRelease = true;
             return;
         }
         if (startDragPerson) {
@@ -170,6 +203,7 @@ void gui_handleInput(PersonArray* array) {
                 } else if (p != startDragPerson) {
                     startDragPerson->partner = p;
                     p->partner = startDragPerson;
+                    gui_handleMatch(p);
                     startDragPerson = NULL;
                     waitForRelease = true;
                 }
@@ -179,6 +213,15 @@ void gui_handleInput(PersonArray* array) {
         startDragPerson = NULL;
         waitForRelease = false;
     }
+}
+
+static void gui_handleMatch(Person* person) {
+    score += person_getScore(person);
+}
+
+static void gui_handleExpired(Person* person) {
+    person->expired = true;
+    num_expired += 1;
 }
 
 static Texture2D gui_getIconForInterest(Interests interest) {
@@ -226,11 +269,11 @@ static Texture2D gui_getIconForInterest(Interests interest) {
 }
 
 static Vector2 gui_getLineAnchor(Person* person) {
-    bool left = person->index & 1;
-    if (left) {
-        return (Vector2){.x = person->position.x + CHARACTER_FILE_WIDTH, .y = person->position.y + CHARACTER_RECT / 2};
-    } else {
+    bool right = person->index & 1;
+    if (right) {
         return (Vector2){.x = person->position.x, .y = person->position.y + CHARACTER_RECT / 2};
+    } else {
+        return (Vector2){.x = person->position.x + CHARACTER_FILE_WIDTH, .y = person->position.y + CHARACTER_RECT / 2};
     }
 }
 

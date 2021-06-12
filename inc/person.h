@@ -2,6 +2,7 @@
 #define PERSON_H
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <raylib.h>
 
@@ -32,5 +33,6 @@ typedef struct Person{
 } Person;
 
 Person person_create(void);
+uint64_t person_getScore(Person* person);
 
 #endif //PERSON_H

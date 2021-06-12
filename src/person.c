@@ -37,3 +37,7 @@ static Interests person_generateInterest(void) {
     }
     return result;
 }
+
+uint64_t person_getScore(Person* person) {
+    return person->partner? 1 : 0; //TODO: come up with some fancy ranking based on matched interests
+}
