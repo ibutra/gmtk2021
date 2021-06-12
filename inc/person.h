@@ -1,6 +1,8 @@
 #ifndef PERSON_H
 #define PERSON_H
 
+#include <stdbool.h>
+
 typedef enum {
     COOKING     = (1 << 0),
     HANDYWORK   = (1 << 1),
@@ -20,6 +22,7 @@ typedef struct {
     const char* name;
     Interests wants;
     Interests has;
+    bool expired;
 }Person;
 
 Person person_create(void);

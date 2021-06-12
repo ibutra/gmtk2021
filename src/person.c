@@ -9,6 +9,7 @@ Person person_create(void) {
         .name = nameList[r],
         .wants = 0,
         .has = 0,
+        .expired = false,
     };
     return p;
 }
