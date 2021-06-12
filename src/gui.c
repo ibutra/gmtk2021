@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <raylib.h>
+#include <raygui.h>
 
 #include "gui_helper.h"
 #include "icons.h"
@@ -17,7 +18,7 @@
 
 #define SHOW_SCORE (0)
 
-#define NUM_EXPIRED_LOST (20)
+#define NUM_EXPIRED_LOST (4)
 
 #define INTERFACE_HEIGHT (50)
 
@@ -66,6 +67,8 @@ static uint64_t score = 0; //The score duh. If anybody overflows this let me kno
 static Person* startDragPerson = NULL; //Person we are currently dragging from
 static bool waitForRelease = false; //We joined two persons so waiting for mouse release
 static float elapsedTime = -TIME_TO_START;
+static PersonArray personArray;
+static PersonArray* array = &personArray;
 
 
 /*
@@ -82,7 +85,7 @@ static bool gui_lost(void);
  * Implementation
  */
 
-void gui_initPersonIcons(void) {
+void gui_init(void) {
     character = LoadTextureFromImage(LoadImageFromMemory("png", character_png, character_png_len));
     hammer = LoadTextureFromImage(LoadImageFromMemory("png", __3d_hammer_png, __3d_hammer_png_len));
     basketball_jersey = LoadTextureFromImage(LoadImageFromMemory("png", basketball_jersey_png, basketball_jersey_png_len));
@@ -96,6 +99,10 @@ void gui_initPersonIcons(void) {
     sloth = LoadTextureFromImage(LoadImageFromMemory("png", sloth_png, sloth_png_len));
     wave_surfer = LoadTextureFromImage(LoadImageFromMemory("png", wave_surfer_png, wave_surfer_png_len));
     white_book = LoadTextureFromImage(LoadImageFromMemory("png", white_book_png, white_book_png_len));
+    if (!personarray_create(array)) {
+        fprintf(stderr, "Failed to create person array\n");
+        exit(-1);
+    }
 }
 
 void gui_updateGameTime(void) {
@@ -104,8 +111,22 @@ void gui_updateGameTime(void) {
     }
 }
 
+void gui_reset(void) {
+    expired_index = 0;
+    index_visible = 0;
+    num_expired = 0;
+    startDragPerson = NULL;
+    waitForRelease = false;
+    elapsedTime = -TIME_TO_START;
+    //Initial filling of array
+    personarray_clear(array);
+    for (size_t i = 0; i < 200; i++) {
+        personarray_add(array, person_create());
+    }
+}
+
 // Draw two scrolling lists of persons
-void gui_drawPersonlist(PersonArray* array) {
+void gui_drawPersonlist(void) {
     for (size_t i = index_visible; i < array->count; i++) {
         int width = GetScreenWidth();
         int margin = MARGIN;
@@ -181,7 +202,7 @@ void gui_drawPersonlist(PersonArray* array) {
     }
 }
 
-void gui_drawInterface(PersonArray* array) {
+State gui_drawInterface(void) {
     //Score and expired
     DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
     DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
@@ -192,6 +213,9 @@ void gui_drawInterface(PersonArray* array) {
         const int padding = 3;
         DrawRectangle((GetScreenWidth() - MeasureText(msg, fontSize)) / 2 - padding, (GetScreenHeight()) / 2 - padding, MeasureText(msg, fontSize) + 2 * padding, fontSize + 2 * padding, WHITE);
         DrawText(msg, (GetScreenWidth() - MeasureText(msg, fontSize)) / 2 , GetScreenHeight() / 2, fontSize, BLACK);
+        if(GuiButton((Rectangle){.x = GetScreenWidth() / 2 - 50, .y = GetScreenHeight() / 2 + 50, .width = 100, .height = 30}, "Menu")) {
+            return STATE_MENU;
+        }
     }
     //Start timer
     if (elapsedTime < 0.0f) {
@@ -210,9 +234,13 @@ void gui_drawInterface(PersonArray* array) {
     y = INTERFACE_HEIGHT + CHARACTER_RECT;
     DrawLine(0, y, GetScreenWidth(), y, RED);
     DrawRectangleGradientV(0, INTERFACE_HEIGHT, GetScreenWidth(), CHARACTER_RECT, RED, (Color){.r = 255, .a = 10});
+    return STATE_GAME;
 }
 
-void gui_handleInput(PersonArray* array) {
+void gui_handleInput(void) {
+    if (gui_lost()) {
+        return;
+    }
     Vector2 mouse = GetMousePosition();
     if (IsMouseButtonDown(0)) {
         if (waitForRelease) {

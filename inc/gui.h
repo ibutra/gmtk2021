@@ -2,12 +2,14 @@
 #define GUI_H
 
 #include "personarray.h"
+#include "state.h"
 
-void gui_initPersonIcons(void);
+void gui_init(void);
 
 void gui_updateGameTime(void);
-void gui_drawPersonlist(PersonArray* array);
-void gui_drawInterface(PersonArray* array);
-void gui_handleInput(PersonArray* array);
+void gui_reset(void);
+void gui_drawPersonlist(void);
+State gui_drawInterface(void);
+void gui_handleInput(void);
 
 #endif //GUI_H

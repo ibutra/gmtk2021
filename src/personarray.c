@@ -48,3 +48,6 @@ Person* personarray_get(PersonArray* array, size_t index) {
     return &array->persons[index];
 }
 
+void personarray_clear(PersonArray* array) {
+    array->count = 0;
+}

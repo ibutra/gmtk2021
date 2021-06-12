@@ -4,10 +4,10 @@ project(GMTK)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SRC src/main.c src/person.c src/personarray.c src/gui.c src/gui_helper.c)
+set(SRC src/main.c src/person.c src/personarray.c src/gui.c src/gui_helper.c src/mainmenu.c)
 
 add_executable(${PROJECT_NAME} ${SRC})
-target_include_directories(${PROJECT_NAME} PUBLIC inc data)
+target_include_directories(${PROJECT_NAME} PUBLIC inc data lib/raygui)
 
 add_subdirectory(lib/raylib)
 target_link_libraries(${PROJECT_NAME} raylib_static)

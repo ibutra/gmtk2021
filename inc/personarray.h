@@ -14,5 +14,6 @@ typedef struct {
 bool personarray_create(PersonArray* out);
 bool personarray_add(PersonArray* array, Person person);
 Person* personarray_get(PersonArray* array, size_t index);
+void personarray_clear(PersonArray* array);
 
 #endif //PERSONARRAY_H
