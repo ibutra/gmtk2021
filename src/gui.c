@@ -23,7 +23,7 @@
 
 #define CHARACTER_RECT (100)
 #define INTEREST_RECT (40)
-#define CHARACTER_FILE_WIDTH (CHARACTER_RECT + 5 * INTEREST_RECT)
+#define CHARACTER_FILE_WIDTH (CHARACTER_RECT + 6 * INTEREST_RECT)
 
 #define MARGIN (100)
 #define INTER_CHARACTER_MARGIN (10)
@@ -35,17 +35,29 @@
 
 Texture2D character;
 Texture2D hammer;
+Texture2D hammerBW;
 Texture2D basketball_jersey;
+Texture2D basketball_jerseyBW;
 Texture2D cooking_pot;
+Texture2D cooking_potBW;
 Texture2D gamepad;
+Texture2D gamepadBW;
 Texture2D gardening_shears;
+Texture2D gardening_shearsBW;
 Texture2D journey;
+Texture2D journeyBW;
 Texture2D paint_brush;
+Texture2D paint_brushBW;
 Texture2D party_popper;
+Texture2D party_popperBW;
 Texture2D shopping_bag;
+Texture2D shopping_bagBW;
 Texture2D sloth;
+Texture2D slothBW;
 Texture2D wave_surfer;
+Texture2D wave_surferBW;
 Texture2D white_book;
+Texture2D white_bookBW;
 
 static int64_t expired_index = 0; //We don't need to consider characters before this index, they are already unhappy ;)
 static size_t index_visible = 0; //This is the index of the first visible character
@@ -61,7 +73,7 @@ static float elapsedTime = -TIME_TO_START;
  */
 static void gui_handleMatch(Person* person);
 static void gui_handleExpired(Person* person);
-static Texture2D gui_getIconForInterest(Interests interest);
+static Texture2D gui_getIconForInterest(Interests interest, bool bw);
 static Vector2 gui_getLineAnchor(Person* person);
 static Rectangle gui_getCharacterFileRect(Person* person);
 static bool gui_lost(void);
@@ -73,17 +85,29 @@ static bool gui_lost(void);
 void gui_initPersonIcons(void) {
     character = LoadTextureFromImage(LoadImageFromMemory("png", character_png, character_png_len));
     hammer = LoadTextureFromImage(LoadImageFromMemory("png", __3d_hammer_png, __3d_hammer_png_len));
+    hammerBW = LoadTextureFromImage(LoadImageFromMemory("png", __3d_hammer_bw_png, __3d_hammer_bw_png_len));
     basketball_jersey = LoadTextureFromImage(LoadImageFromMemory("png", basketball_jersey_png, basketball_jersey_png_len));
+    basketball_jerseyBW = LoadTextureFromImage(LoadImageFromMemory("png", basketball_jersey_bw_png, basketball_jersey_bw_png_len));
     cooking_pot = LoadTextureFromImage(LoadImageFromMemory("png", cooking_pot_png, cooking_pot_png_len));
+    cooking_potBW = LoadTextureFromImage(LoadImageFromMemory("png", cooking_pot_bw_png, cooking_pot_bw_png_len));
     gamepad = LoadTextureFromImage(LoadImageFromMemory("png", gamepad_png, gamepad_png_len));
+    gamepadBW = LoadTextureFromImage(LoadImageFromMemory("png", gamepad_bw_png, gamepad_bw_png_len));
     gardening_shears = LoadTextureFromImage(LoadImageFromMemory("png", gardening_shears_png, gardening_shears_png_len));
+    gardening_shearsBW = LoadTextureFromImage(LoadImageFromMemory("png", gardening_shears_bw_png, gardening_shears_bw_png_len));
     journey = LoadTextureFromImage(LoadImageFromMemory("png", journey_png, journey_png_len));
+    journeyBW = LoadTextureFromImage(LoadImageFromMemory("png", journey_bw_png, journey_bw_png_len));
     paint_brush = LoadTextureFromImage(LoadImageFromMemory("png", paint_brush_png, paint_brush_png_len));
+    paint_brushBW = LoadTextureFromImage(LoadImageFromMemory("png", paint_brush_bw_png, paint_brush_bw_png_len));
     party_popper = LoadTextureFromImage(LoadImageFromMemory("png", party_popper_png, party_popper_png_len));
+    party_popperBW = LoadTextureFromImage(LoadImageFromMemory("png", party_popper_bw_png, party_popper_bw_png_len));
     shopping_bag = LoadTextureFromImage(LoadImageFromMemory("png", shopping_bag_png, shopping_bag_png_len));
+    shopping_bagBW = LoadTextureFromImage(LoadImageFromMemory("png", shopping_bag_bw_png, shopping_bag_bw_png_len));
     sloth = LoadTextureFromImage(LoadImageFromMemory("png", sloth_png, sloth_png_len));
+    slothBW = LoadTextureFromImage(LoadImageFromMemory("png", sloth_bw_png, sloth_bw_png_len));
     wave_surfer = LoadTextureFromImage(LoadImageFromMemory("png", wave_surfer_png, wave_surfer_png_len));
+    wave_surferBW = LoadTextureFromImage(LoadImageFromMemory("png", wave_surfer_bw_png, wave_surfer_bw_png_len));
     white_book = LoadTextureFromImage(LoadImageFromMemory("png", white_book_png, white_book_png_len));
+    white_bookBW = LoadTextureFromImage(LoadImageFromMemory("png", white_book_bw_png, white_book_bw_png_len));
 }
 
 void gui_updateGameTime(void) {
@@ -142,27 +166,27 @@ void gui_drawPersonlist(PersonArray* array) {
         x += CHARACTER_RECT;
         //Draw interests the character wants
         int num = 0;
-        Color wantTint = tint;
         /* if (startDragPerson && startDragPerson != person) { */
         /*     wantTint.a *= 0.25; */
         /* } */
         /* for (int i = 0; i < NUM_INTERESTS; i++) { */
         /*     if (person->wants & (1 << i)) { */
         /*         Texture2D texture = gui_getIconForInterest(1 << i); */
-        /*         gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, wantTint); */
+        /*         gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint); */
         /*         num++; */
         /*     } */
         /* } */
         //Draw interests the character has
-        y += CHARACTER_RECT - INTEREST_RECT;
+        y += CHARACTER_RECT - 2 * INTEREST_RECT;
         num = 0;
-        Color hasTint = tint;
         for (int i = 0; i < NUM_INTERESTS; i++) {
-            if (person->has & (1 << i)) {
-                Texture2D texture = gui_getIconForInterest(1 << i);
-                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, hasTint);
-                num++;
+            if (i == NUM_INTERESTS / 2) {
+                y += INTEREST_RECT;
             }
+            bool bright = person->has & (1 << i);
+            Texture2D texture = gui_getIconForInterest(1 << i, !bright);
+            gui_drawTextureScaledToSize(texture, x + (num % (NUM_INTERESTS / 2))* INTEREST_RECT, y, INTEREST_RECT, tint);
+            num++;
         }
         //Outline
         DrawRectangleLinesEx(gui_getCharacterFileRect(person), 2.0f, BLACK);
@@ -278,7 +302,7 @@ void gui_handleInput(PersonArray* array) {
 static void gui_handleMatch(Person* person) {
     score += person_getScore(person);
     if (!person->happy) {
-        num_expired += 1;
+        num_expired += 2;
     }
 }
 
@@ -287,47 +311,91 @@ static void gui_handleExpired(Person* person) {
     num_expired += 1;
 }
 
-static Texture2D gui_getIconForInterest(Interests interest) {
-    switch (interest) {
-        case COOKING:
-            return cooking_pot;
-            break;
-        case HANDYWORK:
-            return hammer;
-            break;
-        case PAINT:
-            return paint_brush;
-            break;
-        case GAME:
-            return gamepad;
-            break;
-        case LAZY:
-            return sloth;
-            break;
-        case PARTY:
-            return party_popper;
-            break;
-        case SPORT:
-            return basketball_jersey;
-            break;
-        case WATER_SPORT:
-            return wave_surfer;
-            break;
-        case READ:
-            return white_book;
-            break;
-        case GARDEN:
-            return gardening_shears;
-            break;
-        case TRAVEL:
-            return journey;
-            break;
-        case SHOPPING:
-            return shopping_bag;
-            break;
-        default: 
-            fprintf(stderr, "Requested invalid interest\n");
-            exit(-1);
+static Texture2D gui_getIconForInterest(Interests interest, bool bw) {
+    if (!bw) {
+        switch (interest) {
+            case COOKING:
+                return cooking_pot;
+                break;
+            case HANDYWORK:
+                return hammer;
+                break;
+            case PAINT:
+                return paint_brush;
+                break;
+            case GAME:
+                return gamepad;
+                break;
+            case LAZY:
+                return sloth;
+                break;
+            case PARTY:
+                return party_popper;
+                break;
+            case SPORT:
+                return basketball_jersey;
+                break;
+            case WATER_SPORT:
+                return wave_surfer;
+                break;
+            case READ:
+                return white_book;
+                break;
+            case GARDEN:
+                return gardening_shears;
+                break;
+            case TRAVEL:
+                return journey;
+                break;
+            case SHOPPING:
+                return shopping_bag;
+                break;
+            default: 
+                fprintf(stderr, "Requested invalid interest\n");
+                exit(-1);
+        }
+    } else {
+        switch (interest) {
+            case COOKING:
+                return cooking_potBW;
+                break;
+            case HANDYWORK:
+                return hammerBW;
+                break;
+            case PAINT:
+                return paint_brushBW;
+                break;
+            case GAME:
+                return gamepadBW;
+                break;
+            case LAZY:
+                return slothBW;
+                break;
+            case PARTY:
+                return party_popperBW;
+                break;
+            case SPORT:
+                return basketball_jerseyBW;
+                break;
+            case WATER_SPORT:
+                return wave_surferBW;
+                break;
+            case READ:
+                return white_bookBW;
+                break;
+            case GARDEN:
+                return gardening_shearsBW;
+                break;
+            case TRAVEL:
+                return journeyBW;
+                break;
+            case SHOPPING:
+                return shopping_bagBW;
+                break;
+            default: 
+                fprintf(stderr, "Requested invalid interest\n");
+                exit(-1);
+        }
     }
 }
 

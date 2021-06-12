@@ -15,4 +15,17 @@
 #include "wave-surfer.h"
 #include "white-book.h"
 
+#include "3d-hammer-bw.h"
+#include "basketball-jersey-bw.h"
+#include "cooking-pot-bw.h"
+#include "gamepad-bw.h"
+#include "gardening-shears-bw.h"
+#include "journey-bw.h"
+#include "paint-brush-bw.h"
+#include "party-popper-bw.h"
+#include "shopping-bag-bw.h"
+#include "sloth-bw.h"
+#include "wave-surfer-bw.h"
+#include "white-book-bw.h"
+
 #endif //ICONS_H

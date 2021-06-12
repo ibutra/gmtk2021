@@ -3,3 +3,4 @@ web_build
 tags
 compile_commands.json
 .cache
+.DS_Store
