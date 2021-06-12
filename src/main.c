@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     const int screenWidth = 1024;
     const int screenHeight = 768;
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    /* SetConfigFlags(FLAG_WINDOW_RESIZABLE); */
     InitWindow(screenWidth, screenHeight, "GMTK"); //TODO: change title
     SetTargetFPS(60);
 

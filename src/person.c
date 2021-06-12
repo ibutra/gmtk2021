@@ -27,7 +27,6 @@ Person person_create(void) {
     unsigned int r = rand()/((RAND_MAX)/nameListNum);//Not equally distributed but eh
     Person p = {
         .name = nameList[r],
-        .wants = person_generateInterest(NUM_WANTS),
         .has = person_generateInterest(NUM_HAS),
         .expired = false,
         .position = {.x = 0, .y = 0},

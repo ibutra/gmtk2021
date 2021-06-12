@@ -24,7 +24,6 @@ typedef enum {
 
 typedef struct Person{
     const char* name;
-    Interests wants;
     Interests has;
     bool expired;
     Vector2 position;

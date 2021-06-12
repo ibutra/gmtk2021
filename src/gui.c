@@ -23,7 +23,7 @@
 
 #define CHARACTER_RECT (100)
 #define INTEREST_RECT (40)
-#define CHARACTER_FILE_WIDTH (CHARACTER_RECT + 6 * INTEREST_RECT)
+#define CHARACTER_FILE_WIDTH (CHARACTER_RECT + 5 * INTEREST_RECT)
 
 #define MARGIN (100)
 #define INTER_CHARACTER_MARGIN (10)
@@ -164,11 +164,11 @@ void gui_drawPersonlist(PersonArray* array) {
             exit(-1);
         }
         x += CHARACTER_RECT;
-        //Draw interests the character wants
-        int num = 0;
+        //Draw name
+        DrawText(person->name, x, y + 20, 25, BLACK);
         //Draw interests the character has
-        y += CHARACTER_RECT - 1 * INTEREST_RECT;
-        num = 0;
+        y += CHARACTER_RECT - INTEREST_RECT;
+        int num = 0;
         for (int i = 0; i < NUM_INTERESTS; i++) {
             bool bright = true;
             if (person->has & (1 << i)) {
