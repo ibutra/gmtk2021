@@ -4,7 +4,7 @@ project(GMTK)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SRC src/main.c src/person.c src/personarray.c src/gui_personlist.c src/gui_helper.c)
+set(SRC src/main.c src/person.c src/personarray.c src/gui.c src/gui_helper.c)
 
 add_executable(${PROJECT_NAME} ${SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC inc data)

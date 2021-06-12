@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "person.h"
 #include "personarray.h"
-#include "gui_personlist.h"
+#include "gui.h"
 
 int main(int argc, char** argv) {
     srand(time(NULL));
@@ -34,10 +34,11 @@ int main(int argc, char** argv) {
 
         BeginDrawing();
         {
+            gui_updateGameTime();
             gui_handleInput(&personArray);
             ClearBackground(RAYWHITE);
-            /* DrawText("Hello World", 100, 100, 20, BLACK); */
             gui_drawPersonlist(&personArray);
+            gui_drawInterface(&personArray);
         }
         EndDrawing();
 

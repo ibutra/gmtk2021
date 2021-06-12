@@ -1,11 +1,18 @@
-#include "gui_personlist.h"
+#include "gui.h"
 
 #include <stdio.h>
+#include <math.h>
 #include <raylib.h>
 
 #include "gui_helper.h"
 #include "icons.h"
 #include "person.h"
+
+/*
+ * Defines
+ */
+#define TIME_TO_START (1.0f) //Seconds //TODO: set reasonable
+#define SCROLL_FACTOR (10.0f) //TODO: decide whether this gets progressively faster
 
 #define CHARACTER_RECT (100)
 #define INTEREST_RECT (40)
@@ -13,6 +20,10 @@
 
 #define MARGIN (100)
 
+
+/*
+ * Globals
+ */
 
 Texture2D character;
 Texture2D hammer;
@@ -28,13 +39,22 @@ Texture2D sloth;
 Texture2D wave_surfer;
 Texture2D white_book;
 
-static size_t expired_index = 0;
-static Person* startDragPerson = NULL;
-static bool waitForRelease = false;
+static size_t expired_index = 0; //We don't need to consider characters before this index, they are already unhappy ;)
+static Person* startDragPerson = NULL; //Person we are currently dragging from
+static bool waitForRelease = false; //We joined two persons so waiting for mouse release
+static float elapsedTime = -TIME_TO_START;
 
+
+/*
+ * Static functions
+ */
 static Texture2D gui_getIconForInterest(Interests interest);
 static Vector2 gui_getLineAnchor(Person* person);
 static Rectangle gui_getCharacterFileRect(Person* person);
+
+/*
+ * Implementation
+ */
 
 void gui_initPersonIcons(void) {
     character = LoadTextureFromImage(LoadImageFromMemory("png", character_png, character_png_len));
@@ -52,12 +72,13 @@ void gui_initPersonIcons(void) {
     white_book = LoadTextureFromImage(LoadImageFromMemory("png", white_book_png, white_book_png_len));
 }
 
-
+void gui_updateGameTime(void) {
+    elapsedTime += GetFrameTime();
+}
 
 // Draw two scrolling lists of persons
 void gui_drawPersonlist(PersonArray* array) {
     for (size_t i = 0; i < array->count; i++) {
-        //TODO: calculate positions based on window size
         int width = GetScreenWidth();
         int margin = MARGIN;
         while (width - 2 * CHARACTER_FILE_WIDTH - 2 * margin < 0) {
@@ -66,35 +87,60 @@ void gui_drawPersonlist(PersonArray* array) {
         margin = MAX(0, margin);
 
         int x = i & 1? margin : width - CHARACTER_FILE_WIDTH - margin;
-        int y = (i >> 1) * 200;
-        gui_drawTextureScaledToSize(character, x, y, CHARACTER_RECT);
-        //Draw interests
+        int y = (i >> 1) * 200 + MARGIN - SCROLL_FACTOR * MAX(0, elapsedTime);
+
         Person* person = personarray_get(array, i);
+        person->position.x = x;
+        person->position.y = y;
+        //Handle expired characters
+        if (y == 0 && !person->partner) {
+            person->expired = true;
+            expired_index = person->index;
+        }
+        Color tint = WHITE;
+        if (person->expired) {
+            tint = GRAY;
+        } else if (person->partner) {
+            tint = PINK;
+        }
+        //Draw character
+        DrawRectangleRec(gui_getCharacterFileRect(person), tint);
+        gui_drawTextureScaledToSize(character, x, y, CHARACTER_RECT, tint);
+        //Draw interests
         if (!person) {
             fprintf(stderr, "Invalid person requested, something is seriously wrong!!!\n");
             exit(-1);
         }
-        person->position.x = x;
-        person->position.y = y;
         x += CHARACTER_RECT;
         y += CHARACTER_RECT - INTEREST_RECT;
         int num = 0;
         for (int i = 0; i < NUM_INTERESTS; i++) {
             if (person->has & (1 << i)) {
                 Texture2D texture = gui_getIconForInterest(1 << i);
-                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT);
+                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, tint);
                 num++;
             }
         }
+        //Outline
         DrawRectangleLinesEx(gui_getCharacterFileRect(person), 2.0f, BLACK);
         if (person->partner) {
             Person* partner = person->partner;
-            Vector2 personAnchor = gui_getLineAnchor(person);
-            Vector2 partnerAnchor = gui_getLineAnchor(partner);
-            int controlY = (personAnchor.y + partnerAnchor.y) / 2;
-            int controlX = GetScreenWidth() / 2;
-            DrawLineBezierQuad(personAnchor, partnerAnchor, (Vector2){.x = controlX, .y = controlY}, 2.0f, BLACK);
+            if (partner->index > person->index) {
+                Vector2 personAnchor = gui_getLineAnchor(person);
+                Vector2 partnerAnchor = gui_getLineAnchor(partner);
+                int controlY = (personAnchor.y + partnerAnchor.y) / 2;
+                int controlX = GetScreenWidth() / 2;
+                DrawLineBezierQuad(personAnchor, partnerAnchor, (Vector2){.x = controlX, .y = controlY}, 2.0f, BLACK);
+            }
         }
+    }
+}
+
+void gui_drawInterface(PersonArray* array) {
+    if (elapsedTime < 0.0f) {
+        char buffer[20];
+        snprintf(buffer, 20, "%i", (int)fabsf(elapsedTime));
+        DrawText(buffer, GetScreenWidth() / 2, GetScreenHeight() / 2, 20, BLACK);
     }
 }
 
@@ -116,7 +162,7 @@ void gui_handleInput(PersonArray* array) {
             Person* p = personarray_get(array, i);
             Rectangle r = gui_getCharacterFileRect(p);
             if (CheckCollisionPointRec(mouse, r)) {
-                if (p->partner) {
+                if (p->partner || p->expired) {
                     continue;
                 }
                 if (!startDragPerson) {
