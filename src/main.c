@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     }
 
     //TODO: Dummy for now:
-    for (size_t i = 0; i < 201; i++) { // XD
+    for (size_t i = 0; i < 201; i++) {
         Person p = person_create();
         personarray_add(&personArray, p);
     }

@@ -85,29 +85,17 @@ static bool gui_lost(void);
 void gui_initPersonIcons(void) {
     character = LoadTextureFromImage(LoadImageFromMemory("png", character_png, character_png_len));
     hammer = LoadTextureFromImage(LoadImageFromMemory("png", __3d_hammer_png, __3d_hammer_png_len));
-    hammerBW = LoadTextureFromImage(LoadImageFromMemory("png", __3d_hammer_bw_png, __3d_hammer_bw_png_len));
     basketball_jersey = LoadTextureFromImage(LoadImageFromMemory("png", basketball_jersey_png, basketball_jersey_png_len));
-    basketball_jerseyBW = LoadTextureFromImage(LoadImageFromMemory("png", basketball_jersey_bw_png, basketball_jersey_bw_png_len));
     cooking_pot = LoadTextureFromImage(LoadImageFromMemory("png", cooking_pot_png, cooking_pot_png_len));
-    cooking_potBW = LoadTextureFromImage(LoadImageFromMemory("png", cooking_pot_bw_png, cooking_pot_bw_png_len));
     gamepad = LoadTextureFromImage(LoadImageFromMemory("png", gamepad_png, gamepad_png_len));
-    gamepadBW = LoadTextureFromImage(LoadImageFromMemory("png", gamepad_bw_png, gamepad_bw_png_len));
     gardening_shears = LoadTextureFromImage(LoadImageFromMemory("png", gardening_shears_png, gardening_shears_png_len));
-    gardening_shearsBW = LoadTextureFromImage(LoadImageFromMemory("png", gardening_shears_bw_png, gardening_shears_bw_png_len));
     journey = LoadTextureFromImage(LoadImageFromMemory("png", journey_png, journey_png_len));
-    journeyBW = LoadTextureFromImage(LoadImageFromMemory("png", journey_bw_png, journey_bw_png_len));
     paint_brush = LoadTextureFromImage(LoadImageFromMemory("png", paint_brush_png, paint_brush_png_len));
-    paint_brushBW = LoadTextureFromImage(LoadImageFromMemory("png", paint_brush_bw_png, paint_brush_bw_png_len));
     party_popper = LoadTextureFromImage(LoadImageFromMemory("png", party_popper_png, party_popper_png_len));
-    party_popperBW = LoadTextureFromImage(LoadImageFromMemory("png", party_popper_bw_png, party_popper_bw_png_len));
     shopping_bag = LoadTextureFromImage(LoadImageFromMemory("png", shopping_bag_png, shopping_bag_png_len));
-    shopping_bagBW = LoadTextureFromImage(LoadImageFromMemory("png", shopping_bag_bw_png, shopping_bag_bw_png_len));
     sloth = LoadTextureFromImage(LoadImageFromMemory("png", sloth_png, sloth_png_len));
-    slothBW = LoadTextureFromImage(LoadImageFromMemory("png", sloth_bw_png, sloth_bw_png_len));
     wave_surfer = LoadTextureFromImage(LoadImageFromMemory("png", wave_surfer_png, wave_surfer_png_len));
-    wave_surferBW = LoadTextureFromImage(LoadImageFromMemory("png", wave_surfer_bw_png, wave_surfer_bw_png_len));
     white_book = LoadTextureFromImage(LoadImageFromMemory("png", white_book_png, white_book_png_len));
-    white_bookBW = LoadTextureFromImage(LoadImageFromMemory("png", white_book_bw_png, white_book_bw_png_len));
 }
 
 void gui_updateGameTime(void) {

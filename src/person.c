@@ -10,7 +10,6 @@
 #define NUM_WANTS (3)
 #define NUM_HAS   (5)
 
-//TODO: I should calculate the chance for each result and choose chances based on that but apparently I suck at probabilities
 #define CHANCE_HAPPY_0 (0)
 #define CHANCE_HAPPY_1 (20)
 #define CHANCE_HAPPY_2 (30)
