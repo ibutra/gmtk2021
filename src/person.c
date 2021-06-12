@@ -12,10 +12,10 @@
 
 //TODO: I should calculate the chance for each result and choose chances based on that but apparently I suck at probabilities
 #define CHANCE_HAPPY_0 (0)
-#define CHANCE_HAPPY_1 (10)
-#define CHANCE_HAPPY_2 (25)
+#define CHANCE_HAPPY_1 (20)
+#define CHANCE_HAPPY_2 (30)
 #define CHANCE_HAPPY_3 (75)
-#define CHANCE_HAPPY_4 (90)
+#define CHANCE_HAPPY_4 (95)
 #define CHANCE_HAPPY_5 (100)
 #define CHANCE_HAPPY_6 (100)
 static int person_probabilities[] = {CHANCE_HAPPY_0, CHANCE_HAPPY_1, CHANCE_HAPPY_2, CHANCE_HAPPY_3, CHANCE_HAPPY_4, CHANCE_HAPPY_5, CHANCE_HAPPY_6};
@@ -63,9 +63,11 @@ uint64_t person_getScoreBetween(Person* a, Person* b) {
     }
     uint64_t score = 0;
     //Check my direction
-    Interests combined = a->wants & b->has;
-    score += person_getCount(combined);
-    combined = a->has & b->wants;
+    /* Interests combined = a->wants & b->has; */
+    /* score += person_getCount(combined); */
+    /* combined = a->has & b->wants; */
+    /* score += person_getCount(combined); */
+    Interests combined = a->has & b->has;
     score += person_getCount(combined);
     return score;
 }

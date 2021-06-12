@@ -15,7 +15,9 @@
 #define TIME_TO_START (10.0f) //Seconds //TODO: set reasonable
 #define SCROLL_FACTOR (30.0f) //TODO: decide whether this gets progressively faster
 
-#define NUM_EXPIRED_LOST (10000)
+#define SHOW_SCORE (0)
+
+#define NUM_EXPIRED_LOST (20)
 
 #define INTERFACE_HEIGHT (50)
 
@@ -144,13 +146,13 @@ void gui_drawPersonlist(PersonArray* array) {
         /* if (startDragPerson && startDragPerson != person) { */
         /*     wantTint.a *= 0.25; */
         /* } */
-        for (int i = 0; i < NUM_INTERESTS; i++) {
-            if (person->wants & (1 << i)) {
-                Texture2D texture = gui_getIconForInterest(1 << i);
-                gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, wantTint);
-                num++;
-            }
-        }
+        /* for (int i = 0; i < NUM_INTERESTS; i++) { */
+        /*     if (person->wants & (1 << i)) { */
+        /*         Texture2D texture = gui_getIconForInterest(1 << i); */
+        /*         gui_drawTextureScaledToSize(texture, x + num * INTEREST_RECT, y, INTEREST_RECT, wantTint); */
+        /*         num++; */
+        /*     } */
+        /* } */
         //Draw interests the character has
         y += CHARACTER_RECT - INTEREST_RECT;
         num = 0;
@@ -236,7 +238,8 @@ void gui_handleInput(PersonArray* array) {
                 }
                 if (!startDragPerson) {
                     startDragPerson = p;
-                } else if (false && startDragPerson && p != startDragPerson) { //If we hover over a person show potential score
+#if SHOW_SCORE == 1
+                } else if (startDragPerson && p != startDragPerson) { //If we hover over a person show potential score
                     char buffer[40];
                     snprintf(buffer, 40, "%lli", person_getScoreBetween(startDragPerson, p));
                     const int mouseOffset = 10;
@@ -244,6 +247,7 @@ void gui_handleInput(PersonArray* array) {
                     const int offset = 2;
                     DrawRectangle(mouse.x - offset, mouse.y - size / 2 - offset - mouseOffset, MeasureText(buffer, size) + 2 * offset, size + 2 * offset, WHITE);
                     DrawText(buffer, mouse.x, mouse.y - size / 2 - mouseOffset, size, BLACK);
+#endif
                 }
             }
         }
