@@ -18,7 +18,7 @@
 
 #define SHOW_SCORE (0)
 
-#define NUM_EXPIRED_LOST (4)
+#define NUM_EXPIRED_LOST (20)
 
 #define INTERFACE_HEIGHT (50)
 
@@ -112,6 +112,7 @@ void gui_updateGameTime(void) {
 }
 
 void gui_reset(void) {
+    score = 0;
     expired_index = 0;
     index_visible = 0;
     num_expired = 0;

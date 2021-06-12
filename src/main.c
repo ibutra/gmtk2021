@@ -10,7 +10,6 @@
 #include "mainmenu.h"
 
 //TODO: Fix person generation
-//TODO: Add main Menu
 //TODO: add credits
 //TODO: add help
 //TODO: make somewhat pretty
