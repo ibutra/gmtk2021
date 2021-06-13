@@ -137,13 +137,7 @@ void gui_drawPersonlist(void) {
     }
     for (size_t i = index_visible; i < array->count; i++) {
         int width = GetScreenWidth();
-        int margin = MARGIN;
-        while (width - 2 * CHARACTER_FILE_WIDTH - 2 * margin < 0) {
-            margin -= 10;
-        }
-        margin = MAX(0, margin);
-
-        int x = i & 1? width - CHARACTER_FILE_WIDTH - margin : margin;
+        int x = i & 1? GetScreenWidth() / 2 + MARGIN : GetScreenWidth() / 2 - CHARACTER_FILE_WIDTH - MARGIN;
         int y = (i >> 1) * (CHARACTER_RECT + INTER_CHARACTER_MARGIN); //Space characters nicely
         y += MARGIN + INTERFACE_HEIGHT - SCROLL_FACTOR * MAX(0, elapsedTime); // Add offset to expired line and scroll based on time
 
