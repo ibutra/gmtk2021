@@ -9,6 +9,7 @@
 #include "gui_helper.h"
 #include "icons.h"
 #include "person.h"
+#include "names.h"
 
 /*
  * Defines
@@ -58,6 +59,11 @@ static float elapsedTime = -TIME_TO_START;
 static PersonArray personArray;
 static PersonArray* array = &personArray;
 
+static const char* achievementMessage = NULL;
+static float achievementElapsedTime = 0.0f;
+static bool playtimeUnlocked = false;
+static int singleScoreMatches = 0;
+
 
 /*
  * Static functions
@@ -68,6 +74,7 @@ static Texture2D gui_getIconForInterest(Interests interest, bool bw);
 static Vector2 gui_getLineAnchor(Person* person);
 static Rectangle gui_getCharacterFileRect(Person* person);
 static bool gui_lost(void);
+static void gui_showAchievement(const char* txt);
 
 /*
  * Implementation
@@ -97,6 +104,10 @@ void gui_updateGameTime(void) {
     if (!gui_lost()) {
         elapsedTime += GetFrameTime();
     }
+    if (!playtimeUnlocked && elapsedTime >= 11.0f * 60.0f) {
+        gui_showAchievement("Every 11 minutes one person joines GMTK GameJam");
+        playtimeUnlocked = true;
+    }
 }
 
 void gui_reset(void) {
@@ -107,6 +118,8 @@ void gui_reset(void) {
     startDragPerson = NULL;
     waitForRelease = false;
     elapsedTime = -TIME_TO_START;
+    playtimeUnlocked = false;
+    singleScoreMatches = 0;
     //Initial filling of array
     personarray_clear(array);
     for (size_t i = 0; i < 200; i++) {
@@ -192,10 +205,39 @@ void gui_drawPersonlist(void) {
 }
 
 State gui_drawInterface(void) {
+    //Expiry line
+    int y = INTERFACE_HEIGHT + CHARACTER_RECT;
+    DrawLine(0, y, GetScreenWidth(), y, RED);
+    DrawRectangleGradientV(0, INTERFACE_HEIGHT, GetScreenWidth(), CHARACTER_RECT, RED, (Color){.r = 255, .a = 10});
+
+    //Achievment
+    if (achievementMessage) {
+        achievementElapsedTime += GetFrameTime();
+        float factor = 1.0f;
+        //1 Second in
+        // Show 8 seconds
+        // 1 Second out
+        if (achievementElapsedTime < 1.0f) {
+            factor = achievementElapsedTime;
+        } else if (achievementElapsedTime >= 4.0f) {
+            factor = 5.0f - achievementElapsedTime;
+        }
+        const int height = 50;
+        const int width = GetScreenWidth() / 2;
+        const int fontSize = 30;
+        int x = (GetScreenWidth() - width) / 2;
+        int y = INTERFACE_HEIGHT;
+        y -= (1.0f - factor) * height;
+        DrawRectangle(x, y, width, height, WHITE);
+        DrawText(achievementMessage, (GetScreenWidth() - MeasureText(achievementMessage, fontSize)) / 2, y + 0.5f * (height - fontSize), fontSize, BLACK);
+        if (achievementElapsedTime >= 5.0f) {
+            achievementMessage = NULL;
+        }
+    }
     //Score and expired
     DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
     DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
-    int y = INTERFACE_HEIGHT / 2;
+    y = INTERFACE_HEIGHT / 2;
     if (gui_lost()) {
         const char* msg = "GAME OVER!";
         const int fontSize = 50;
@@ -219,10 +261,8 @@ State gui_drawInterface(void) {
     snprintf(buffer, 1024, "Score: %lli", score);
     DrawText(buffer, GetScreenWidth() - 200, y, 20, BLACK);
 
-    //Expiry line
-    y = INTERFACE_HEIGHT + CHARACTER_RECT;
-    DrawLine(0, y, GetScreenWidth(), y, RED);
-    DrawRectangleGradientV(0, INTERFACE_HEIGHT, GetScreenWidth(), CHARACTER_RECT, RED, (Color){.r = 255, .a = 10});
+
+    
     return STATE_GAME;
 }
 
@@ -294,10 +334,25 @@ void gui_handleInput(void) {
 }
 
 static void gui_handleMatch(Person* person) {
-    if (!person->happy) {
-        num_expired += 2;
-    } else {
+    if (person->happy) {
         score += person_getScore(person);
+        if (person->name == nameList[0] || person->partner->name == nameList[0]) {// This matches Lukas
+            gui_showAchievement("You matched Lukas!");
+        }
+        if (person->name == nameList[1] && person->partner->name == nameList[2] || person->name == nameList[2] && person->partner->name == nameList[1]) {
+            gui_showAchievement("True love!");
+        }
+        if (score == 1) {
+            singleScoreMatches += 1;
+            if (singleScoreMatches == 5) {
+                gui_showAchievement("Thomas is happy!");
+            }
+        }
+    } else {
+        num_expired += 2;
+    }
+    if (score == 42) {
+        gui_showAchievement("You reached a score of 42!");
     }
 }
 
@@ -365,4 +420,9 @@ static Rectangle gui_getCharacterFileRect(Person* person) {
 
 static bool gui_lost(void) {
     return num_expired >= NUM_EXPIRED_LOST;
+}
+
+static void gui_showAchievement(const char* txt) {
+    achievementElapsedTime = 0.0f;
+    achievementMessage = txt;
 }

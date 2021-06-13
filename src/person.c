@@ -23,7 +23,7 @@ static Interests person_generateInterest(int num);
 static uint64_t person_getCount(Interests interests);
 
 Person person_create(void) {
-    unsigned int r = rand()%nameListNum;//Not equally distributed but eh
+    unsigned int r = rand()%3;//Not equally distributed but eh
     Person p = {
         .name = nameList[r],
         .has = person_generateInterest(NUM_HAS),
