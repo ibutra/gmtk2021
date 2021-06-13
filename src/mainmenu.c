@@ -9,7 +9,9 @@
 Texture2D logo;
 
 void menu_init(void) {
-    logo = LoadTextureFromImage(LoadImageFromMemory("png", logo_png, logo_png_len));
+    Image logoImage = LoadImageFromMemory("png", logo_png, logo_png_len);
+    SetWindowIcon(logoImage);
+    logo = LoadTextureFromImage(logoImage);
 }
 
 State menu_show(void) {

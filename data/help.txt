@@ -1,7 +1,7 @@
-The automatic joining algorithm that matches people for your dating app broke down.  So now you are in charge!  Match people based on their interests. Everybody has five, the more interests match the higher the chance they stay together.  If too many people are unhappy with your service your plattform is doomed an the game is over.
+The automatic joining algorithm that matches people for your dating app broke down.  So now you are in charge!  Match people based on their interests. Everybody has five, the more interests match the higher the chance they stay together.  If too many people are unhappy with your service your platform is doomed and the game is over.
 
-Tipps:
+Tips:
 - To join couples simply drag from one to another
 - You can match people in the same column
 - The interests are always in the same order
-- Sometimes it is better to let one person unmatched instead of getting two unhappy
+- Sometimes it is better to let one person unmatched instead of making two unhappy
