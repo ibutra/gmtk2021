@@ -11,8 +11,6 @@
 #include "font.h"
 #include "creditscreen.h"
 
-//TODO: make somewhat pretty
-
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
 #include "raygui.h"
@@ -27,7 +25,7 @@ int main(int argc, char** argv) {
 
     /* SetConfigFlags(FLAG_WINDOW_RESIZABLE); */
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "GMTK"); //TODO: change title
+    InitWindow(screenWidth, screenHeight, "CoupleJoin");
     SetTargetFPS(60);
     SetExitKey(0);
 
