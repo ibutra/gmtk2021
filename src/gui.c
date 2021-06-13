@@ -36,29 +36,17 @@
 
 Texture2D character;
 Texture2D hammer;
-Texture2D hammerBW;
 Texture2D basketball_jersey;
-Texture2D basketball_jerseyBW;
 Texture2D cooking_pot;
-Texture2D cooking_potBW;
 Texture2D gamepad;
-Texture2D gamepadBW;
 Texture2D gardening_shears;
-Texture2D gardening_shearsBW;
 Texture2D journey;
-Texture2D journeyBW;
 Texture2D paint_brush;
-Texture2D paint_brushBW;
 Texture2D party_popper;
-Texture2D party_popperBW;
 Texture2D shopping_bag;
-Texture2D shopping_bagBW;
 Texture2D sloth;
-Texture2D slothBW;
 Texture2D wave_surfer;
-Texture2D wave_surferBW;
 Texture2D white_book;
-Texture2D white_bookBW;
 
 static int64_t expired_index = 0; //We don't need to consider characters before this index, they are already unhappy ;)
 static size_t index_visible = 0; //This is the index of the first visible character
