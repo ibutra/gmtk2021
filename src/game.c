@@ -150,7 +150,7 @@ void gui_drawPersonlist(void) {
         person->position.x = x;
         person->position.y = y;
         //Handle expired characters
-        if (y == INTERFACE_HEIGHT && !person->partner && !person->expired) {
+        if (y <= INTERFACE_HEIGHT && !person->partner && !person->expired) {
             expired_index = person->index;
             gui_handleExpired(person);
         }
