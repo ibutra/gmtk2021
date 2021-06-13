@@ -9,7 +9,7 @@ static Vector2 scroll = {0, 0};
 
 State credits_show(void) {
     Rectangle bounds = {.x = 10, .y = 10, .width = GetScreenWidth() - 20, .height = GetScreenHeight() - 20 - 50};
-    Rectangle content = {0, 0, GetScreenWidth() - 50, 2300};
+    Rectangle content = {0, 0, GetScreenWidth() - 50, 2500};
     Rectangle view = GuiScrollPanel(bounds, content, &scroll);
 
     BeginScissorMode(view.x, view.y, view.width, view.height);
