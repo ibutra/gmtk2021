@@ -3,6 +3,7 @@
 
 #include "state.h"
 
+void menu_init(void);
 State menu_show(void);
 
 #endif //MAINMENU_H

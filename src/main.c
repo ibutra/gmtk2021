@@ -8,12 +8,10 @@
 #include "game.h"
 #include "state.h"
 #include "mainmenu.h"
+#include "font.h"
+#include "creditscreen.h"
 
-//TODO: Fix person generation
-//TODO: add credits
-//TODO: add help
 //TODO: make somewhat pretty
-//TODO: change font
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_SUPPORT_ICONS
@@ -31,6 +29,10 @@ int main(int argc, char** argv) {
     InitWindow(screenWidth, screenHeight, "GMTK"); //TODO: change title
     SetTargetFPS(60);
 
+    //Load Font
+    font_load();
+    menu_init();
+
     style();
 
     gui_init();
@@ -40,7 +42,7 @@ int main(int argc, char** argv) {
         BeginDrawing();
         {
             State newState;
-            ClearBackground(WHITE);
+            ClearBackground(RAYWHITE);
             if (state == STATE_MENU) {
                 newState = menu_show();
             } else if (state == STATE_GAME) {
@@ -48,6 +50,8 @@ int main(int argc, char** argv) {
                 gui_drawPersonlist();
                 gui_handleInput();
                 newState = gui_drawInterface();
+            } else if (state == STATE_CREDITS) {
+                newState = credits_show();
             }
             if (newState != state) {
                 gui_reset();

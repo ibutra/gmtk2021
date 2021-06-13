@@ -6,6 +6,7 @@
 #include <raylib.h>
 #include <raygui.h>
 
+#include "font.h"
 #include "gui_helper.h"
 #include "icons.h"
 #include "person.h"
@@ -157,8 +158,8 @@ void gui_drawPersonlist(void) {
         if (y < -CHARACTER_RECT + INTERFACE_HEIGHT) {
             index_visible = person->index + 1; 
         }
-        Color tint = WHITE;
-        Color bg = WHITE;
+        Color tint = RAYWHITE;
+        Color bg = RAYWHITE;
         if (gui_lost()) {
             tint = LIGHTGRAY;
             bg = LIGHTGRAY;
@@ -181,7 +182,7 @@ void gui_drawPersonlist(void) {
         }
         x += CHARACTER_RECT;
         //Draw name
-        DrawText(person->name, x, y + 20, 25, BLACK);
+        DrawTextEx(gameFont_30, person->name, (Vector2) {x, y + 15}, 30, 1.0f, BLACK);
         //Draw interests the character has
         y += CHARACTER_RECT - INTEREST_RECT;
         int num = 0;
@@ -229,26 +230,26 @@ State gui_drawInterface(void) {
         }
         const int height = 50;
         const int width = GetScreenWidth() / 2;
-        const int fontSize = 30;
         int x = (GetScreenWidth() - width) / 2;
         int y = INTERFACE_HEIGHT;
         y -= (1.0f - factor) * height;
-        DrawRectangle(x, y, width, height, WHITE);
-        DrawText(achievementMessage, (GetScreenWidth() - MeasureText(achievementMessage, fontSize)) / 2, y + 0.5f * (height - fontSize), fontSize, BLACK);
+        int fontSize = 30;
+        DrawRectangle(x, y, width, height, RAYWHITE);
+        DrawTextEx(gameFont_30, achievementMessage, (Vector2){(GetScreenWidth() - MeasureTextEx(gameFont_30, achievementMessage, fontSize, 1.0f).x) / 2, y + 0.5f * (height - fontSize)}, fontSize, 1.0f, BLACK);
         if (achievementElapsedTime >= 5.0f) {
             achievementMessage = NULL;
         }
     }
     //Score and expired
-    DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, WHITE);
+    DrawRectangle(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, RAYWHITE);
     DrawRectangleLines(0, 0, GetScreenWidth(), INTERFACE_HEIGHT, BLACK);
     y = INTERFACE_HEIGHT / 2;
     if (gui_lost()) {
         const char* msg = "GAME OVER!";
         const int fontSize = 50;
         const int padding = 3;
-        DrawRectangle((GetScreenWidth() - MeasureText(msg, fontSize)) / 2 - padding, (GetScreenHeight()) / 2 - padding, MeasureText(msg, fontSize) + 2 * padding, fontSize + 2 * padding, WHITE);
-        DrawText(msg, (GetScreenWidth() - MeasureText(msg, fontSize)) / 2 , GetScreenHeight() / 2, fontSize, BLACK);
+        DrawRectangle((GetScreenWidth() - MeasureTextEx(gameFont_50, msg, fontSize, 1.0f).x) / 2 - padding, (GetScreenHeight()) / 2 - padding, MeasureTextEx(gameFont_50, msg, fontSize, 1.0f).x + 2 * padding, fontSize + 2 * padding, RAYWHITE);
+        DrawTextEx(gameFont_50, msg, (Vector2){(GetScreenWidth() - MeasureTextEx(gameFont_50, msg, fontSize, 1.0f).x) / 2 , GetScreenHeight() / 2}, fontSize, 1.0f, BLACK);
         if(GuiButton((Rectangle){.x = GetScreenWidth() / 2 - 50, .y = GetScreenHeight() / 2 + 50, .width = 100, .height = 30}, "Menu")) {
             return STATE_MENU;
         }
@@ -261,14 +262,14 @@ State gui_drawInterface(void) {
     if (elapsedTime < 0.0f) {
         char buffer[20];
         snprintf(buffer, 20, "%i", (int)fabsf(elapsedTime));
-        DrawText(buffer, GetScreenWidth() / 2, y, 20, BLACK);
+        DrawTextEx(gameFont_20, buffer, (Vector2){GetScreenWidth() / 2, y}, 20, 1.0f, BLACK);
     }
 
     char buffer[1024];
     snprintf(buffer, 1024, "Sad Characters: %li/%i", num_expired, NUM_EXPIRED_LOST);
-    DrawText(buffer, MARGIN, y, 20, BLACK);
+    DrawTextEx(gameFont_20, buffer, (Vector2){MARGIN, y}, 20, 1.0f, BLACK);
     snprintf(buffer, 1024, "Score: %lli", score);
-    DrawText(buffer, GetScreenWidth() - 200, y, 20, BLACK);
+    DrawTextEx(gameFont_20, buffer, (Vector2){GetScreenWidth() - 200, y}, 20, 1.0f, BLACK);
 
 
     
@@ -312,8 +313,8 @@ void gui_handleInput(void) {
                     const int mouseOffset = 10;
                     const int size = 20;
                     const int offset = 2;
-                    DrawRectangle(mouse.x - offset, mouse.y - size / 2 - offset - mouseOffset, MeasureText(buffer, size) + 2 * offset, size + 2 * offset, WHITE);
-                    DrawText(buffer, mouse.x, mouse.y - size / 2 - mouseOffset, size, BLACK);
+                    DrawRectangle(mouse.x - offset, mouse.y - size / 2 - offset - mouseOffset, MeasureTextEx(gameFont_20, buffer, size, 1.0f).x + 2 * offset, size + 2 * offset, RAYWHITE);
+                    DrawTextEx(gameFont_20, buffer, (Vector2){mouse.x, mouse.y - size / 2 - mouseOffset}, size, 1.0f, BLACK);
 #endif
                 }
             }

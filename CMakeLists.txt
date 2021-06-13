@@ -4,7 +4,7 @@ project(GMTK)
 
 set(CMAKE_C_STANDARD 11)
 
-set(SRC src/main.c src/person.c src/personarray.c src/game.c src/gui_helper.c src/mainmenu.c src/names.c)
+set(SRC src/main.c src/person.c src/personarray.c src/game.c src/gui_helper.c src/mainmenu.c src/names.c src/font.c src/creditscreen.c)
 
 add_executable(${PROJECT_NAME} ${SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC inc data lib/raygui)
