@@ -15,7 +15,7 @@ void menu_init(void) {
 }
 
 State menu_show(void) {
-    const int logoHeight = 400;
+    const int logoHeight = 350;
     float f = (float)logoHeight / logo.height;
     const int width = logo.width * f;
     const int x = (GetScreenWidth() - width) / 2;
@@ -24,7 +24,7 @@ State menu_show(void) {
 
     const int margin = 50;
     const int buttonHeight = GetScreenHeight() * 7 / 8;
-    const int offset = 40;
+    const int offset = 0;
     Rectangle helpRect = {.x = margin, .y = logoHeight - offset, .width = GetScreenWidth() - 2 * margin, .height = buttonHeight - logoHeight + offset};
     DrawTextRec(gameFont_20, (const char*)help_txt, helpRect, 20.0f, 1.0f, true, BLACK);
     Rectangle r = {.x = GetScreenWidth() / 2 - 50 - 100, .y = buttonHeight, .width = 100, .height = 50};
