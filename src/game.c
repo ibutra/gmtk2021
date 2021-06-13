@@ -122,13 +122,18 @@ void gui_reset(void) {
     singleScoreMatches = 0;
     //Initial filling of array
     personarray_clear(array);
-    for (size_t i = 0; i < 200; i++) {
+    for (size_t i = 0; i < 100; i++) {
         personarray_add(array, person_create());
     }
 }
 
 // Draw two scrolling lists of persons
 void gui_drawPersonlist(void) {
+    if (index_visible >= array->count - 40) {
+        for (size_t i = 0; i < 50; i++) {
+            personarray_add(array, person_create());
+        }
+    }
     for (size_t i = index_visible; i < array->count; i++) {
         int width = GetScreenWidth();
         int margin = MARGIN;
