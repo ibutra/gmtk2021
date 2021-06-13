@@ -1,4 +1,4 @@
-#include "gui.h"
+#include "game.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -307,90 +307,46 @@ static void gui_handleExpired(Person* person) {
 }
 
 static Texture2D gui_getIconForInterest(Interests interest, bool bw) {
-    if (!bw) {
-        switch (interest) {
-            case COOKING:
-                return cooking_pot;
-                break;
-            case HANDYWORK:
-                return hammer;
-                break;
-            case PAINT:
-                return paint_brush;
-                break;
-            case GAME:
-                return gamepad;
-                break;
-            case LAZY:
-                return sloth;
-                break;
-            case PARTY:
-                return party_popper;
-                break;
-            case SPORT:
-                return basketball_jersey;
-                break;
-            case WATER_SPORT:
-                return wave_surfer;
-                break;
-            case READ:
-                return white_book;
-                break;
-            case GARDEN:
-                return gardening_shears;
-                break;
-            case TRAVEL:
-                return journey;
-                break;
-            case SHOPPING:
-                return shopping_bag;
-                break;
-            default: 
-                fprintf(stderr, "Requested invalid interest\n");
-                exit(-1);
-        }
-    } else {
-        switch (interest) {
-            case COOKING:
-                return cooking_potBW;
-                break;
-            case HANDYWORK:
-                return hammerBW;
-                break;
-            case PAINT:
-                return paint_brushBW;
-                break;
-            case GAME:
-                return gamepadBW;
-                break;
-            case LAZY:
-                return slothBW;
-                break;
-            case PARTY:
-                return party_popperBW;
-                break;
-            case SPORT:
-                return basketball_jerseyBW;
-                break;
-            case WATER_SPORT:
-                return wave_surferBW;
-                break;
-            case READ:
-                return white_bookBW;
-                break;
-            case GARDEN:
-                return gardening_shearsBW;
-                break;
-            case TRAVEL:
-                return journeyBW;
-                break;
-            case SHOPPING:
-                return shopping_bagBW;
-                break;
-            default: 
-                fprintf(stderr, "Requested invalid interest\n");
-                exit(-1);
-        }
+    switch (interest) {
+        case COOKING:
+            return cooking_pot;
+            break;
+        case HANDYWORK:
+            return hammer;
+            break;
+        case PAINT:
+            return paint_brush;
+            break;
+        case GAME:
+            return gamepad;
+            break;
+        case LAZY:
+            return sloth;
+            break;
+        case PARTY:
+            return party_popper;
+            break;
+        case SPORT:
+            return basketball_jersey;
+            break;
+        case WATER_SPORT:
+            return wave_surfer;
+            break;
+        case READ:
+            return white_book;
+            break;
+        case GARDEN:
+            return gardening_shears;
+            break;
+        case TRAVEL:
+            return journey;
+            break;
+        case SHOPPING:
+            return shopping_bag;
+            break;
+        default: 
+            fprintf(stderr, "Requested invalid interest\n");
+            exit(-1);
     }
 }
 

@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include "person.h"
 #include "personarray.h"
-#include "gui.h"
+#include "game.h"
 #include "state.h"
 #include "mainmenu.h"
 
