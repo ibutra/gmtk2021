@@ -252,6 +252,10 @@ State gui_drawInterface(void) {
         if(GuiButton((Rectangle){.x = GetScreenWidth() / 2 - 50, .y = GetScreenHeight() / 2 + 50, .width = 100, .height = 30}, "Menu")) {
             return STATE_MENU;
         }
+        if(GuiButton((Rectangle){.x = GetScreenWidth() / 2 - 50, .y = GetScreenHeight() / 2 + 50 + 50, .width = 100, .height = 30}, "Retry")) {
+            gui_reset();
+            return STATE_GAME;
+        }
     }
     //Start timer
     if (elapsedTime < 0.0f) {
