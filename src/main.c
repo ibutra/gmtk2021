@@ -26,8 +26,10 @@ int main(int argc, char** argv) {
     State state = STATE_MENU;
 
     /* SetConfigFlags(FLAG_WINDOW_RESIZABLE); */
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "GMTK"); //TODO: change title
     SetTargetFPS(60);
+    SetExitKey(0);
 
     //Load Font
     font_load();
