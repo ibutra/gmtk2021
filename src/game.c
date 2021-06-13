@@ -257,6 +257,11 @@ State gui_drawInterface(void) {
             gui_reset();
             return STATE_GAME;
         }
+    } else {
+        Rectangle backRectangle = {10, GetScreenHeight() - 30 - 10, 80, 30};
+        if (GuiButton(backRectangle, "Menu")) {
+            return STATE_MENU;
+        }
     }
     //Start timer
     if (elapsedTime < 0.0f) {

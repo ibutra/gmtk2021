@@ -12,8 +12,6 @@ State credits_show(void) {
     Rectangle content = {0, 0, GetScreenWidth() - 50, 2300};
     Rectangle view = GuiScrollPanel(bounds, content, &scroll);
 
-    printf("%f\n", scroll.y);
-
     BeginScissorMode(view.x, view.y, view.width, view.height);
     {
         Rectangle r = {bounds.x + scroll.x, bounds.y + scroll.y, content.width, content.height};
