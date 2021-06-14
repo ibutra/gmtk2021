@@ -267,10 +267,8 @@ State gui_drawInterface(void) {
     char buffer[1024];
     snprintf(buffer, 1024, "Sad Characters: %li/%i", num_expired, NUM_EXPIRED_LOST);
     DrawTextEx(gameFont_20, buffer, (Vector2){MARGIN, y}, 20, 1.0f, BLACK);
-    snprintf(buffer, 1024, "Score: %lli", score);
+    snprintf(buffer, 1024, "Score: %li", score);
     DrawTextEx(gameFont_20, buffer, (Vector2){GetScreenWidth() - 200, y}, 20, 1.0f, BLACK);
-
-
     
     return STATE_GAME;
 }
