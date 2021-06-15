@@ -19,6 +19,7 @@
 #define CHANCE_HAPPY_6 (100)
 static int person_probabilities[] = {CHANCE_HAPPY_0, CHANCE_HAPPY_1, CHANCE_HAPPY_2, CHANCE_HAPPY_3, CHANCE_HAPPY_4, CHANCE_HAPPY_5, CHANCE_HAPPY_6};
 
+
 static Interests person_generateInterest(int num);
 static uint64_t person_getCount(Interests interests);
 
@@ -36,18 +37,21 @@ Person person_create(void) {
 }
 
 bool person_match(Person* a, Person* b)  {
+    static int probabilityAdjustment = 0;
     a->partner = b;
     b->partner = a;
     uint64_t score = person_getScoreBetween(a, b);
     score = MIN(MAX(0, score), sizeof(person_probabilities) / sizeof(int));
-    int probability = person_probabilities[score];
+    int probability = person_probabilities[score] + probabilityAdjustment;
     int v = rand() % 100;
     printf("Score: %li P: %i Target: %i\n", score, v, probability);
-    if (v < probability) {
+    if (v <= probability) {
         a->happy = true;
         b->happy = true;
+        probabilityAdjustment = 0;
         return true;
     }
+    probabilityAdjustment += 10;
     return false;
 }
 
